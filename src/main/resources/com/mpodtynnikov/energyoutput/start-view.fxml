@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mpodtynnikov.energyoutput.MainController">
+   <top>
+       <MenuBar BorderPane.alignment="CENTER">
+           <Menu mnemonicParsing="false" text="Файл">
+               <MenuItem mnemonicParsing="false" onAction="#openJSON" text="Открыть файл" />
+               <MenuItem mnemonicParsing="false" onAction="#saveToJSON" text="Сохранить файл" />
+           </Menu>
+           <Menu mnemonicParsing="false" text="Помощь">
+               <MenuItem mnemonicParsing="false" text="О программе" />
+           </Menu>
+       </MenuBar>
+   </top>
+   <left>
+      <TreeView fx:id="elementsTree" prefHeight="375.0" prefWidth="148.0" BorderPane.alignment="CENTER" />
+   </left>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <Label text="Название" />
+         <TextField fx:id="titleText" />
+         <VBox fx:id="peopleBox" prefHeight="143.0" prefWidth="452.0">
+            <Label text="Пол" />
+            <RadioButton fx:id="manSelect" mnemonicParsing="false" selected="true" text="Мужской">
+               <toggleGroup>
+                  <ToggleGroup fx:id="sexGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="womanSelect" mnemonicParsing="false" text="Женский" toggleGroup="$sexGroup" />
+            <Label text="Дата рождения" />
+            <DatePicker fx:id="birthdayText" />
+            <Label text="Индекс массы тела" />
+            <ChoiceBox fx:id="IMTSelect" prefWidth="150.0" />
+         </VBox>
+         <Label layoutX="10.0" layoutY="53.0" text="Количество" />
+         <TextField fx:id="countText" />
+         <Separator prefHeight="13.0" prefWidth="452.0" />
+         <Label text="Энергия" />
+         <TextField fx:id="energyText" editable="false" />
+         <Label text="O2" />
+         <TextField fx:id="o2Text" editable="false" />
+         <Label text="CO2" />
+         <TextField fx:id="co2Text" editable="false" />
+      </VBox>
+   </center>
+</BorderPane>
