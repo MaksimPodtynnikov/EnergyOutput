@@ -13,7 +13,7 @@ public class PeopleSerializer extends JsonSerializer<PeopleState> {
         jsonGenerator.writeStringField("title", people.title);
         jsonGenerator.writeNumberField("count", people.count);
         jsonGenerator.writeStringField("sex", people.sex);
-        jsonGenerator.writeStringField("age", people.age);
+        jsonGenerator.writeStringField("birthday", people.age);
         jsonGenerator.writeStringField("imb", people.imb);
         jsonGenerator.writeNumberField("energy", people.energy);
         jsonGenerator.writeNumberField("o2", people.o2);

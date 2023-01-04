@@ -16,7 +16,7 @@ public class PeopleDeserializer extends JsonDeserializer<People> {
         Sex sex = Sex.valueOf(((TextNode)node.get("sex")).asText());
         TextNode title = (TextNode)node.get("title");
         NumericNode count = (NumericNode)node.get("count");
-        Age age = Age.valueOf(((TextNode)node.get("age")).asText());
+        Age age = Age.valueOf(((TextNode)node.get("birthday")).asText());
         IMB imb = IMB.valueOf(((TextNode)node.get("imb")).asText());
         return new People(sex,age,imb,title.textValue(),count.intValue());
     }
