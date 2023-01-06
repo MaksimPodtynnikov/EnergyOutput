@@ -99,8 +99,9 @@ public class MainController implements Initializable {
                 people.sex = Sex.WOMEN;
             update(people);
         });
+        IMTSelect.setOnAction(null);
         IMTSelect.getSelectionModel().select(people.getImb().ordinal());
-        IMTSelect.setOnHidden(e->{
+        IMTSelect.setOnAction(e->{
             people.setImb(getIMB(IMTSelect.getSelectionModel().getSelectedIndex()));
             update(people);
         });
@@ -126,14 +127,14 @@ public class MainController implements Initializable {
     }
     public IMB getIMB(int value)
     {
-        return switch (value)
-                {
-                    case 0 -> IMB.LOW;
-                    case 1 -> IMB.LOWER;
-                    case 2 -> IMB.MIDDLE;
-                    case 3 -> IMB.HIGHER;
-                    default -> IMB.HIGH;
-                };
+        switch (value)
+        {
+            case 0: return IMB.LOW;
+            case 1: return IMB.LOWER;
+            case 2: return IMB.MIDDLE;
+            case 3: return IMB.HIGHER;
+            default: return IMB.HIGH;
+        }
     }
     @FXML
     private void saveToJSON()
