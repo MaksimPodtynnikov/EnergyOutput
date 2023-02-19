@@ -1,43 +1,87 @@
 package com.mpodtynnikov.energyoutput;
 
+import com.mpodtynnikov.energyoutput.Model.Dao;
 import javafx.scene.control.TreeItem;
 import javafx.scene.text.Text;
 
 public class People extends TreeItem<String> implements Energy {
     int count;
     private String title;
-    Age age;
-    Sex sex;
+    private Age age;
+    private Sex sex;
     private IMB imb;
     private double mass;
+    boolean yearsMode=false;
+    Dao generator;
 
-    public People(Sex sex, Age age, IMB imb,String title, int count)
+    public People(Sex sex, Age age, IMB imb,String title, int count,Dao generator)
     {
         super("",new Text(title));
         this.sex = sex;
         this.age = age;
         this.title = title;
         this.imb = imb;
-        this.mass = age.getMidMass(sex,imb);
+        this.generator = generator;
+        this.mass = generator.getMidMass(age.age.getYear(),sex,imb);
         this.count = count;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+        this.mass = generator.getMidMass(age.age.getYear(),sex,imb);
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public boolean isYearsMode() {
+        return yearsMode;
+    }
+
+    public Sex getSex() {
+        return sex;
     }
 
     public IMB getImb() {
         return imb;
     }
 
+    public Age getAge() {
+        yearsMode = false;
+        return age;
+    }
+
+    public void setAge(Age age) {
+        this.age = age;
+        yearsMode = false;
+        this.mass = generator.getMidMass(age.age.getYear(),sex,imb);
+    }
+
     public void setImb(IMB imb) {
         this.imb = imb;
-        this.mass = age.getMidMass(sex,imb);
+        this.mass = generator.getMidMass(age.age.getYear(),sex,imb);
     }
 
     /**
      * @return величина основного обмена в мДж
      */
     public double getVMT_MDj() {
+
         return age.getMultiplier(sex) * mass + age.getSummand(sex);
     }
 
+    public void setYears(int years)
+    {
+        this.age =new Age(years);
+        yearsMode=true;
+        this.mass = generator.getMidMass(age.age.getYear(),sex,imb);
+    }
+    public int getYears()
+    {
+        yearsMode = true;
+        return age.age.getYear();
+    }
     public void setTitle(String title) {
         this.title = title;
         ((Text)getGraphic()).setText(title);
