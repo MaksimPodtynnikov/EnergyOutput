@@ -8,6 +8,7 @@ import com.mpodtynnikov.energyoutput.JSONParser.*;
 import com.mpodtynnikov.energyoutput.Model.Dao;
 import javafx.scene.control.TreeItem;
 import javafx.scene.text.Text;
+import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -64,9 +65,10 @@ public class Peoples extends TreeItem<String> implements Energy{
         peoples.remove(people);
         getChildren().remove(people);
     }
-    public void addCollection(Peoples peoples){
+    public Peoples addCollection(Peoples peoples){
         collections.add(peoples);
         getChildren().add(peoples);
+        return peoples;
     }
     public void removeCollection(Peoples peoples)
     {
@@ -121,6 +123,101 @@ public class Peoples extends TreeItem<String> implements Energy{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void exportToWord(String path,boolean easyWork) throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        XWPFParagraph title = document.createParagraph();
+        title.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun titleRun = title.createRun();
+        titleRun.setText("Отчет о газо- и тепловыделении детей в проекте '"+this.getTitle()+"'");
+        titleRun.setBold(true);
+        titleRun.setFontFamily("Courier");
+        titleRun.setFontSize(20);
+        XWPFParagraph mainText = document.createParagraph();
+        mainText.setIndentationFirstLine(10);
+        mainText.setAlignment(ParagraphAlignment.BOTH);
+        String countText = " детей";
+        if(this.getCount()==1) countText = " ребенка";
+        XWPFRun mainRun = mainText.createRun();
+        String workText = "при умственной работе.";
+        if(easyWork) workText = "при легкой работе.";
+        mainRun.setText("'"+this.getTitle() +"', находящийся по адресу "+this.getPlace()+", расчитан на "+this.getCount()+countText+
+                ". В сумме выделяется "+this.getWork(easyWork)+" тепла, "+this.getO2(easyWork)+" кислорода и "+this.getCO2(easyWork)+" углекислого газа "+workText);
+        mainRun.setFontFamily("Times New Roman");
+        mainRun.setFontSize(14);
+        XWPFParagraph mainTextGroup = document.createParagraph();
+        mainTextGroup.setIndentationFirstLine(10);
+        mainTextGroup.setAlignment(ParagraphAlignment.BOTH);
+        for (People people: this.getPeoples()){
+            XWPFRun peopleRun = mainTextGroup.createRun();
+            peopleRun.setFontFamily("Times New Roman");
+            peopleRun.setFontSize(14);
+            countText = " детей";
+            if(people.getCount()==1) countText = " ребенка";
+            String sexText=" мужского пола";
+            if(people.getSex()==Sex.WOMEN) sexText=" женского пола";
+            String imbText = " с высоким ИМТ";
+            switch (people.getImb()){
+                case LOW: imbText = " с низким ИМТ";
+                    break;
+                case LOWER: imbText = " с ИМТ ниже среднего";
+                    break;
+                case MIDDLE: imbText = " со средним ИМТ";
+                    break;
+                case HIGHER: imbText = " с ИМТ выше среднего";
+                    break;
+                default:break;
+            }
+            String ageText = " в возрасте "+ people.getAge().age.getYear() +" лет";
+            if(people.getAge().age.getYear()<2) ageText = " в возрасте 1 года";
+            peopleRun.setText("В группе '"+people.getTitle()+"' состоящей из "+people.getCount()+
+                    countText+sexText+imbText+ageText +" выделяет "+people.getWork(easyWork)+" теплоты, "+people.getO2(easyWork)+" кислорода и "+people.getCO2(easyWork)+" углекислого газа.");
+        }
+        for (Peoples collection: this.getCollections())
+            collectionToWord(collection,easyWork,document);
+        FileOutputStream out = new FileOutputStream(path);
+        document.write(out);
+        out.close();
+        document.close();
+    }
+    private void collectionToWord(Peoples collection,boolean easyWork, XWPFDocument document)
+    {
+        XWPFParagraph mainText = document.createParagraph();
+        mainText.setIndentationFirstLine(10);
+        mainText.setAlignment(ParagraphAlignment.BOTH);
+        XWPFRun mainRun = mainText.createRun();
+        mainRun.setFontFamily("Times New Roman");
+        mainRun.setFontSize(14);
+        mainRun.setText("Подколлекция '"+collection.getTitle()+"' находящаяся в месте - "+collection.place+" содержит следующие группы:");
+        mainRun.addBreak(BreakType.TEXT_WRAPPING);
+        for (People people: this.getPeoples()){
+            XWPFRun peopleRun = mainText.createRun();
+            peopleRun.setFontFamily("Times New Roman");
+            peopleRun.setFontSize(14);
+            String countText = " детей";
+            if(people.getCount()==1) countText = " ребенка";
+            String sexText=" мужского пола";
+            if(people.getSex()==Sex.WOMEN) sexText=" женского пола";
+            String imbText = " с высоким ИМТ";
+            switch (people.getImb()){
+                case LOW: imbText = " с низким ИМТ";
+                    break;
+                case LOWER: imbText = " с ИМТ ниже среднего";
+                    break;
+                case MIDDLE: imbText = " со средним ИМТ";
+                    break;
+                case HIGHER: imbText = " с ИМТ выше среднего";
+                    break;
+                default:break;
+            }
+            String ageText = " в возрасте "+ people.getAge().age.getYear() +" лет";
+            if(people.getAge().age.getYear()<2) ageText = " в возрасте 1 года";
+            peopleRun.setText("В группе '"+people.getTitle()+"' состоящей из "+people.getCount()+
+                    countText+sexText+imbText+ageText +" выделяет "+people.getWork(easyWork)+" теплоты, "+people.getO2(easyWork)+" кислорода и "+people.getCO2(easyWork)+" углекислого газа.");
+            peopleRun.addBreak(BreakType.TEXT_WRAPPING);
+        }
+        for (Peoples child: collection.getCollections())
+            collectionToWord(child,easyWork,document);
     }
     public Peoples getFromJSON(String path)
     {

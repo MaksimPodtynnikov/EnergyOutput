@@ -64,6 +64,12 @@ public class LocalBase implements Dao {
 
     private void startCollection()
     {
+        addMidMass(0, Sex.MAN, IMB.LOW,7.7);
+        addMidMass(0,Sex.MAN,IMB.LOWER,8.2);
+        addMidMass(0,Sex.MAN,IMB.MIDDLE,9.6);
+        addMidMass(0,Sex.MAN,IMB.HIGHER,11.5);
+        addMidMass(0,Sex.MAN,IMB.HIGH,13.3);
+
         addMidMass(1, Sex.MAN, IMB.LOW,7.7);
         addMidMass(1,Sex.MAN,IMB.LOWER,8.2);
         addMidMass(1,Sex.MAN,IMB.MIDDLE,9.6);
@@ -160,6 +166,18 @@ public class LocalBase implements Dao {
         addMidMass(16,Sex.MAN,IMB.HIGHER,72);
         addMidMass(16,Sex.MAN,IMB.HIGH,84.7);
 
+        addMidMass(17,Sex.MAN,IMB.LOW,44);
+        addMidMass(17,Sex.MAN,IMB.LOWER,48.3);
+        addMidMass(17,Sex.MAN,IMB.MIDDLE,61);
+        addMidMass(17,Sex.MAN,IMB.HIGHER,72);
+        addMidMass(17,Sex.MAN,IMB.HIGH,84.7);
+
+        addMidMass(0,Sex.WOMEN,IMB.LOW,7);
+        addMidMass(0,Sex.WOMEN,IMB.LOWER,8);
+        addMidMass(0,Sex.WOMEN,IMB.MIDDLE,8.9);
+        addMidMass(0,Sex.WOMEN,IMB.HIGHER,11.5);
+        addMidMass(0,Sex.WOMEN,IMB.HIGH,13.1);
+
         addMidMass(1,Sex.WOMEN,IMB.LOW,7);
         addMidMass(1,Sex.WOMEN,IMB.LOWER,8);
         addMidMass(1,Sex.WOMEN,IMB.MIDDLE,8.9);
@@ -255,6 +273,12 @@ public class LocalBase implements Dao {
         addMidMass(16,Sex.WOMEN,IMB.MIDDLE,56.2);
         addMidMass(16,Sex.WOMEN,IMB.HIGHER,65);
         addMidMass(16,Sex.WOMEN,IMB.HIGH,75.6);
+
+        addMidMass(17,Sex.WOMEN,IMB.LOW,45.2);
+        addMidMass(17,Sex.WOMEN,IMB.LOWER,48.4);
+        addMidMass(17,Sex.WOMEN,IMB.MIDDLE,56.2);
+        addMidMass(17,Sex.WOMEN,IMB.HIGHER,65);
+        addMidMass(17,Sex.WOMEN,IMB.HIGH,75.6);
     }
     @Override
     public double getMidMass(double age, Sex sex,IMB imb) {

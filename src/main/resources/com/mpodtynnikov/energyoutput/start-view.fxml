@@ -10,14 +10,15 @@
            <Menu mnemonicParsing="false" text="Файл">
                <MenuItem mnemonicParsing="false" onAction="#openJSON" text="Открыть файл" />
                <MenuItem mnemonicParsing="false" onAction="#saveToJSON" text="Сохранить файл" />
+            <MenuItem mnemonicParsing="false" onAction="#exportWord" text="Создать отчет" />
            </Menu>
            <Menu mnemonicParsing="false" text="Помощь">
-               <MenuItem mnemonicParsing="false" text="О программе" />
+               <MenuItem mnemonicParsing="false" onAction="#help" text="О программе" />
            </Menu>
        </MenuBar>
    </top>
    <left>
-      <TreeView fx:id="elementsTree" prefWidth="148.0" BorderPane.alignment="CENTER" />
+      <TreeView fx:id="elementsTree" prefHeight="556.0" prefWidth="180.0" BorderPane.alignment="CENTER" />
    </left>
    <center>
       <VBox BorderPane.alignment="CENTER">

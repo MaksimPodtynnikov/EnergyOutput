@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +40,12 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        birthdayText.setDayCellFactory(d ->
+                new DateCell() {
+                    @Override public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setDisable(item.isAfter(LocalDate.now().minusMonths(1)) || item.isBefore(LocalDate.now().minusYears(17)));
+                    }});
         placeLabel.visibleProperty().bind(placeText.visibleProperty());
         placeLabel.managedProperty().bind(placeLabel.visibleProperty());
         placeText.managedProperty().bind(placeText.visibleProperty());
@@ -121,9 +128,29 @@ public class MainController implements Initializable {
         o2Text.textProperty().setValue(String.valueOf(collection.getO2(easyWork.isSelected())));
         co2Text.textProperty().setValue(String.valueOf(collection.getCO2(easyWork.isSelected())));
     }
+    private void countSetting(People people)
+    {
+        if(people.count>1) {
+            people.yearsMode = true;
+            birthdayText.setVisible(false);
+            if(people.getYears()>=1)
+                yearsBox.getSelectionModel().select(people.getYears()-1);
+            else {
+                yearsBox.getSelectionModel().select(0);
+                people.setYears(yearsBox.getValue());
+            }
+            ageText.setText("Возраст");
+        }
+        else{
+            people.yearsMode = false;
+            birthdayText.setVisible(true);
+            birthdayText.setValue(people.getAge().age);
+            ageText.setText("Дата рождения");
+        }
+    }
     public void peopleBoot(People people)
     {
-        birthdayText.setVisible(!people.yearsMode);
+        countSetting(people);
         placeText.setVisible(false);
         yearsBox.setOnAction(null);
         yearsBox.setOnAction(e->{
@@ -133,22 +160,12 @@ public class MainController implements Initializable {
         easyWork.setOnMouseClicked(e->update(people));
         peopleBox.setVisible(true);
         countText.setEditable(true);
-        update(people);
         titleText.textProperty().setValue(people.getTitle());
         titleText.setOnAction(e-> people.setTitle(titleText.getText()));
         countText.textProperty().setValue(String.valueOf(people.count));
         countText.setOnAction(e->{
             people.count = Integer.parseInt(countText.getText());
-            if(people.count>1) {
-                birthdayText.setVisible(false);
-                yearsBox.getSelectionModel().select(people.getYears()-1);
-                ageText.setText("Возраст");
-            }
-            else{
-                birthdayText.setVisible(true);
-                birthdayText.setValue(people.getAge().age);
-                ageText.setText("Дата рождения");
-            }
+            countSetting(people);
             update(people);
         });
         if (people.getSex() == Sex.MAN) {
@@ -185,6 +202,7 @@ public class MainController implements Initializable {
                     LocalDate.parse(birthdayText.getEditor().getText(),DateTimeFormatter.ofPattern("dd.MM.yyyy")).getDayOfMonth()));
             update(people);
         });
+        update(people);
     }
     private void update(People people)
     {
@@ -215,6 +233,16 @@ public class MainController implements Initializable {
             collection.saveToJSON(file.getPath(),easyWork.isSelected());
     }
     @FXML
+    private void exportWord() throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор папки для сохранения");
+        fileChooser.setInitialFileName(collection.getTitle());
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("document", "*.docx"));
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null)
+            collection.exportToWord(file.getPath(),easyWork.isSelected());
+    }
+    @FXML
     private void openJSON()
     {
         FileChooser fileChooser = new FileChooser();
@@ -233,17 +261,25 @@ public class MainController implements Initializable {
     private void collectionLoad(Peoples origin,Peoples destination)
     {
         for (Peoples peoples : origin.getCollections()) {
-            destination.addCollection(peoples);
-            settingCollection(destination, peoples);
-            if (!peoples.getCollections().isEmpty()) {
-                Peoples child = new Peoples(peoples.getTitle(), peoples.getPlace(), modelPass.getGenerator());
-                destination.addCollection(child);
-                collectionLoad(peoples, child);
-            }
+            Peoples newPeoples = destination.addCollection(new Peoples(peoples.getTitle(), peoples.getPlace(), modelPass.getGenerator()));
+            settingCollection(destination, newPeoples);
+            collectionLoad(peoples, newPeoples);
         }
         for (People people : origin.getPeoples()) {
-            destination.add(people);
-            settingPeople(people);
+            People newPeople = new People(people.getSex(),people.getAge(),people.getImb(),people.getTitle(), people.getCount(), modelPass.getGenerator());
+            destination.add(newPeople);
+            settingPeople(newPeople);
         }
+    }
+    @FXML
+    private void help()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "В левой части интерфейса находится дерево иерахии. Для вызова контекстного меню нажмите ПКМ на элемент дерева иерархии." +
+                        "Элементы делятся на 2 типа: коллекции - контейнеры для групп и группы, содержащие наборы параметров для расчета.\nДля выбора элемента нажать на него ЛКМ в дереве иерархии, после чего в правой части экрана ввести параметры." +
+                        "Для сохранения введенных параметров нажать Enter, находясь в поле ввода.\nСвязь с разработчиком - mpodtynnikov@mail.ru");
+        alert.setHeaderText("Информация");
+        alert.setTitle("О программе");
+        alert.show();
     }
 }

@@ -19,6 +19,8 @@ public class People extends TreeItem<String> implements Energy {
         super("",new Text(title));
         this.sex = sex;
         this.age = age;
+        if(age.age.getYear()<1)
+            this.age =new Age(1);
         this.title = title;
         this.imb = imb;
         this.generator = generator;
